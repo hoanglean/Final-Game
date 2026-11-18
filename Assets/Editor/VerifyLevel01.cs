@@ -23,6 +23,8 @@ public static class VerifyLevel01
     static readonly StringBuilder log=new StringBuilder();
     static VerifyLevel01()
     {
+        if (!Environment.GetCommandLineArgs().Contains("-verifyLevel01")) return;
+
         EditorApplication.playModeStateChanged+=s=>{
             if(s==PlayModeStateChange.EnteredPlayMode && !File.Exists(Result))
             {stage=0;next=EditorApplication.timeSinceStartup+1;deadline=next+90;log.Clear();EditorApplication.update+=Tick;}
