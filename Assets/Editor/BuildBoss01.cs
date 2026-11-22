@@ -18,7 +18,7 @@ public static class BuildBoss01
 {
     public const string ScenePath = "Assets/Scenes/Boss01_FrostGuardian.unity";
     const string Status = "Library/Boss01Build.txt";
-    const string Prefabs = "Assets/Prefabs/Boss01";
+    const string Prefabs = "Assets/Prefabs/Chapter01/Bosses";
     static Material material;
     static readonly Color Ice = new Color(.5f,.9f,1);
 
@@ -42,7 +42,7 @@ public static class BuildBoss01
             var arena = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
             material = AssetDatabase.LoadAssetAtPath<Material>("Assets/Materials/OooSpriteUnlit.mat");
             var game = new GameObject("Boss01 Game").AddComponent<BossArenaGame>();
-            var finn = (GameObject)PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Level01/Finn.prefab"));
+            var finn = (GameObject)PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Shared/Player/Finn.prefab"));
             finn.transform.position = new Vector3(-7, .04f, 0); game.player = finn.GetComponent<FinnController>();
 
             var cave = ImportCave();
@@ -92,7 +92,7 @@ public static class BuildBoss01
             game.boss=boss.GetComponent<FrostBossController>();
             foreach(float x in new[]{-10f,10f})
             {
-                var potion=(GameObject)PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Level01/WarmPotion.prefab"));
+                var potion=(GameObject)PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Chapter01/Items/WarmPotion.prefab"));
                 potion.name="Warm Potion "+x;potion.transform.position=new Vector3(x,.75f,0);
             }
             BuildLevel01.CreateSharedUi(game,game.player.image.sprite);BossUi(game);ApplyFrostGuardianArt.AddCredit(game);
@@ -111,7 +111,7 @@ public static class BuildBoss01
         string parent=Path.GetDirectoryName(path).Replace('\\','/');Folder(parent);AssetDatabase.CreateFolder(parent,Path.GetFileName(path));
     }
     static Sprite Ui(int id)
-    {return AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Art/Source/kenney_ui-pack-pixel-adventure/Tiles/Small tiles/Thick outline/tile_"+id.ToString("D4")+".png");}
+    {return AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Art/Shared/Source/kenney_ui-pack-pixel-adventure/Tiles/Small tiles/Thick outline/tile_"+id.ToString("D4")+".png");}
     static Tilemap Map(Transform parent,string name,string layer,int order)
     {
         var go=new GameObject(name,typeof(Tilemap),typeof(TilemapRenderer));go.transform.SetParent(parent,false);go.layer=LayerMask.NameToLayer(layer);
@@ -120,7 +120,7 @@ public static class BuildBoss01
     }
     static Dictionary<string,Sprite> ImportCave()
     {
-        string path=Directory.GetFiles("Assets/Art/Source","cave-platformer-tileset-16x16.png",SearchOption.AllDirectories).Single().Replace('\\','/');
+        string path=Directory.GetFiles("Assets/Art/Chapter01/Source","cave-platformer-tileset-16x16.png",SearchOption.AllDirectories).Single().Replace('\\','/');
         var importer=(TextureImporter)AssetImporter.GetAtPath(path);
         var factories=new SpriteDataProviderFactories();factories.Init();
         var provider=factories.GetSpriteEditorDataProviderFromObject(importer);provider.InitSpriteEditorDataProvider();
@@ -163,7 +163,7 @@ public static class BuildBoss01
     }
     static IceProjectile MakeProjectile()
     {
-        var go=UnityEngine.Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Level01/IceBolt.prefab"));go.name="FrostBolt";
+        var go=UnityEngine.Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Chapter01/Enemies/IceBolt.prefab"));go.name="FrostBolt";
         var shot=go.GetComponent<IceProjectile>();shot.speed=6.5f;shot.damage=14;
         var renderer=go.GetComponentInChildren<SpriteRenderer>();renderer.color=Ice;go.transform.localScale=Vector3.one*1.3f;
         ApplyIceProjectileArt.ImportAnimations();ApplyIceProjectileArt.ConfigureProjectile(go);
@@ -184,7 +184,7 @@ public static class BuildBoss01
     { return ApplyFrostGuardianArt.ImportAnimations(); }
     static GameObject MakeBoss(IceProjectile projectile,IcePillarHazard pillar)
     {
-        var root=UnityEngine.Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Level01/GateGuardian.prefab"));root.name="FrostGuardian";
+        var root=UnityEngine.Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Chapter01/Enemies/GateGuardian.prefab"));root.name="FrostGuardian";
         UnityEngine.Object.DestroyImmediate(root.GetComponent<EnemyController>());
         var visibility=root.GetComponentInChildren<EnemyVisibility>();
         if(visibility!=null)UnityEngine.Object.DestroyImmediate(visibility);
@@ -218,7 +218,7 @@ public static class BuildBoss01
         game.healthFill.sprite=defaultFill;game.healthText.color=new Color(.025f,.07f,.14f);game.healthText.fontStyle=FontStyles.Bold;
         var objective=game.objectiveText.transform.parent.gameObject;objective.SetActive(false);
         var controls=canvas.transform.Find("Controls");controls.GetComponent<RectTransform>().sizeDelta=new Vector2(810,42);
-        controls.GetComponentInChildren<TMP_Text>().text="A D / ← →  Di chuyển      SPACE  Nhảy      ENTER / J  Đánh      ESC  Tạm dừng";
+        controls.GetComponentInChildren<TMP_Text>().text="A D / ← →  Di chuyển      SPACE  Nhảy      ENTER  Đánh      ESC  Tạm dừng";
         var bar=Panel(canvas.transform,"Boss Health",new Vector2(.5f,1),new Vector2(.5f,1),new Vector2(0,-140),new Vector2(660,106),new Color(.035f,.07f,.14f,.96f),Ui(12));
         Label(bar.transform,"Name","KẺ GIỮ BĂNG",25,new Vector2(0,26),new Vector2(570,36),Ice).fontStyle=FontStyles.Bold;
         Panel(bar.transform,"Track",new Vector2(.5f,.5f),new Vector2(.5f,.5f),new Vector2(0,-5),new Vector2(600,20),new Color(.1f,.17f,.25f));

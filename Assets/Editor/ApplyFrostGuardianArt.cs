@@ -12,7 +12,7 @@ public static class ApplyFrostGuardianArt
 {
     const string Request="Library/ApplyFrostGuardian.request";
     const string Result="Library/FrostGuardianAsset.txt";
-    const string Source="Assets/Art/Source/FrostGuardian/PNG files";
+    const string Source="Assets/Art/Chapter01/Source/FrostGuardian/PNG files";
     const string Animations="Assets/Animations/Boss01/FrostGuardian";
 
     [InitializeOnLoadMethod]
@@ -27,8 +27,8 @@ public static class ApplyFrostGuardianArt
         try
         {
             ImportAnimations();
-            var prefab=PrefabUtility.LoadPrefabContents("Assets/Prefabs/Boss01/FrostGuardian.prefab");
-            try { ConfigureBoss(prefab);PrefabUtility.SaveAsPrefabAsset(prefab,"Assets/Prefabs/Boss01/FrostGuardian.prefab"); }
+            var prefab=PrefabUtility.LoadPrefabContents("Assets/Prefabs/Chapter01/Bosses/FrostGuardian.prefab");
+            try { ConfigureBoss(prefab);PrefabUtility.SaveAsPrefabAsset(prefab,"Assets/Prefabs/Chapter01/Bosses/FrostGuardian.prefab"); }
             finally { PrefabUtility.UnloadPrefabContents(prefab); }
             var active=UnityEngine.SceneManagement.SceneManager.GetActiveScene();
             if(active.isDirty&&!string.IsNullOrEmpty(active.path))EditorSceneManager.SaveScene(active);

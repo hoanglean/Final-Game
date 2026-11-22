@@ -91,11 +91,11 @@ public static class ApplySlideCombat
             var active = EditorSceneManager.GetActiveScene();
             if (active.isDirty) EditorSceneManager.SaveScene(active);
             ConfigureLayers();
-            string finnPath = "Assets/Prefabs/Level01/Finn.prefab";
+            string finnPath = "Assets/Prefabs/Shared/Player/Finn.prefab";
             var finnRoot = PrefabUtility.LoadPrefabContents(finnPath);
             try { ConfigureFinn(finnRoot.GetComponent<FinnController>()); PrefabUtility.SaveAsPrefabAsset(finnRoot, finnPath); }
             finally { PrefabUtility.UnloadPrefabContents(finnRoot); }
-            foreach (string path in AssetDatabase.FindAssets("t:Prefab", new[] { "Assets/Prefabs/Level01" }).Select(AssetDatabase.GUIDToAssetPath))
+            foreach (string path in AssetDatabase.FindAssets("t:Prefab", new[] { "Assets/Prefabs/Chapter01/Enemies", "Assets/Prefabs/Shared/Enemies" }).Select(AssetDatabase.GUIDToAssetPath))
             {
                 var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
                 if (prefab.GetComponent<EnemyController>() == null) continue;

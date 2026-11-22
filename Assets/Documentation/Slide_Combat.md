@@ -2,7 +2,7 @@
 
 ## Vùng đánh kiếm
 
-Mở prefab `Assets/Prefabs/Level01/Finn.prefab`, hoặc chọn Finn trong scene và mở `Visual > AtkRange`.
+Mở prefab `Assets/Prefabs/Shared/Player/Finn.prefab`, hoặc chọn Finn trong scene và mở `Visual > AtkRange`.
 
 - AtkRange dùng tag và layer `PlayerSword`.
 - Box Collider 2D: Is Trigger bật, Size (1.6, 1.1), mặc định Enabled tắt.
@@ -21,7 +21,7 @@ Chọn Finn, mở Window > Animation > Animation (Ctrl + 6), chọn Finn_Attack.
 
 Các clip Idle, Run, Jump, Fall, Hurt, Dead luôn tắt collider kiếm. Khi Finn nhận sát thương, code cũng tắt vùng đánh để không giữ hitbox của đòn bị ngắt. Thay đổi nhịp gây sát thương bằng cách chỉnh các keyframe Enabled trong Animation, không cần đổi code thời gian chờ.
 
-FinnController chỉ nhận J/Enter, gửi trigger Atk, mở lượt đánh mới và đổi vị trí trái/phải cho AtkRange. Quái và boss nhận OnTriggerEnter2D/OnTriggerStay2D, kiểm tra tag PlayerSword rồi gọi PlayerSwordHitbox. Không còn OverlapCircleAll để đánh kiếm. DamageZone chỉ nhận collider thân Finn, không tính việc vùng kiếm chạm bẫy là Finn bị trúng.
+FinnController chỉ nhận Enter, gửi trigger Atk, mở lượt đánh mới và đổi vị trí trái/phải cho AtkRange. Quái và boss nhận OnTriggerEnter2D/OnTriggerStay2D, kiểm tra tag PlayerSword rồi gọi PlayerSwordHitbox. Không còn OverlapCircleAll để đánh kiếm. DamageZone chỉ nhận collider thân Finn, không tính việc vùng kiếm chạm bẫy là Finn bị trúng.
 
 ## Quái xuất hiện trong màn hình
 
@@ -37,7 +37,7 @@ Unity cũng tính camera Scene trong Visible/Invisible. Kiểm tra trong tab Gam
 ## Kiểm tra khi mở project
 
 1. Đợi Unity import và biên dịch xong. Một yêu cầu cấu hình đã chuẩn bị sẽ chạy một lần để Unity chuẩn hóa các curve và kiểm tra liên kết prefab. Có thể chạy lại bằng Tools > Ooo Adventure > Apply Slide Sword and Enemy Visibility.
-2. Mở Level01_FrozenForest, Play. Đứng gần quái, nhấn J/Enter. Một nhát gây 35 sát thương; đứng yên không đánh thì vùng kiếm không gây sát thương.
+2. Mở Level01_FrozenForest, Play. Đứng gần quái, nhấn Enter. Một nhát gây 35 sát thương; đứng yên không đánh thì vùng kiếm không gây sát thương.
 3. Đi trái/phải và đánh để kiểm tra AtkRange ở đúng phía. Kiểm tra cả đánh trong lúc nhảy, nhận đòn, chết và chơi lại.
 4. Để quái đi vào/rời vùng camera trong tab Game: quái chỉ di chuyển/tấn công khi Visible. Ra khỏi rồi trở lại màn hình, quái tiếp tục hoạt động.
 5. Mở Boss01_FrostGuardian, kiểm tra kiếm vẫn gây 35 sát thương cho boss và riêng vùng kiếm chạm đòn lao/cột băng không làm Finn mất máu.

@@ -4,13 +4,13 @@ Mở scene `Assets/Scenes/Level01_FrozenForest.unity`. Map đã được lưu s�
 
 ## Thư mục
 
-- `Assets/Art/Source`: ảnh nguồn, spritesheet đã cắt trong Sprite Editor.
+- `Assets/Art/Chapter01/Source` chứa ảnh nguồn riêng của Chương 1. Hình của Finn và bộ UI dùng chung nằm ở `Assets/Art/Shared`.
 - `Assets/Tiles/Level01/Ground`: các Tile mặt đất và bệ đứng, có hình dạng va chạm Grid.
 - `Assets/Tiles/Level01/Decor`: Tile trang trí, không có va chạm.
 - `Assets/Palettes/Level01`: hai bảng FrozenForest_Ground và FrozenForest_Decor.
-- `Assets/Prefabs/Level01/Map/Background`: prefab cây nền để kéo từ Project vào Scene.
-- `Assets/Prefabs/Level01`: nhân vật, quái và vật phẩm.
-- `Assets/Scripts/Level01`, `Assets/Animations/Level01`: code và animation.
+- `Assets/Prefabs/Chapter01/Map/Background`: prefab cây nền để kéo từ Project vào Scene.
+- `Assets/Prefabs/Shared/Player` chứa Finn. `Assets/Prefabs/Chapter01` chứa quái, boss và vật phẩm.
+- `Assets/Scripts/Shared` và `Assets/Scripts/Chapter01` chứa code. Animation của màn 1 nằm ở `Assets/Animations/Level01`.
 
 ## Vẽ, xóa và di chuyển gạch
 

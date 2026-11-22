@@ -40,7 +40,7 @@ public static class BuildLevel01
         try
         {
             if (File.Exists(ScenePath)) { File.WriteAllText(Status, "EXISTS: Scene preserved. Open " + ScenePath); return; }
-            foreach (var folder in new[] { "Assets/Animations/Level01", "Assets/Materials", "Assets/Prefabs/Level01", "Assets/Tiles/Level01/Ground", "Assets/Tiles/Level01/Decor" })
+            foreach (var folder in new[] { "Assets/Animations/Level01", "Assets/Materials", "Assets/Prefabs/Shared/Player", "Assets/Prefabs/Chapter01/Enemies", "Assets/Prefabs/Shared/Enemies", "Assets/Prefabs/Chapter01/Items", "Assets/Tiles/Level01/Ground", "Assets/Tiles/Level01/Decor" })
                 Directory.CreateDirectory(folder);
             AssetDatabase.Refresh();
             SetLayers(); ApplySlideCombat.ConfigureLayers();
@@ -112,11 +112,11 @@ public static class BuildLevel01
             Spawn(mushroom, new Vector2(60, .05f)); Spawn(eye, new Vector2(67, 3.5f));
             Spawn(goblin, new Vector2(90, .05f)).GetComponent<EnemyController>().patrolRange = 1.5f;
             Spawn(guardian, new Vector2(99, .05f));
-            Sign(5, "Jake: Ooo đang bị đóng băng! Tìm 3 bánh răng để sửa cổng thời gian.\nNhấn SPACE để nhảy và ENTER hoặc J để đánh kiếm.");
+            Sign(5, "Jake: Ooo đang bị đóng băng! Tìm 3 bánh răng để sửa cổng thời gian.\nNhấn SPACE để nhảy và ENTER để đánh kiếm.");
             Sign(23, "Jake: Đường phía trước đã gãy. Nhảy qua các bệ băng; chạm nước lạnh sẽ mất mạng.");
             Sign(91, "Jake: Kẻ giữ cổng đang giữ bánh răng cuối.\nNé đạn của hắn rồi áp sát, đánh kiếm!");
             foreach (var pit in new[] { new Vector2(25, 29), new Vector2(47, 51), new Vector2(75, 80) }) Hazard(pit.x, pit.y);
-            var portalSprite = CropSprite(PathFor("sci-fi-tileset.png"), "TimePortal", new Rect(0, 0, 48, 48), 16, new Vector2(.5f, 0));
+            var portalSprite = CropSprite("Assets/Art/Chapter02/Source/Sci-Fi Platformer Tileset [16x16][FREE] - RottingPixels/Sci-Fi Platformer Tileset [16x16][FREE] - RottingPixels/sci-fi-tileset.png", "TimePortal", new Rect(0, 0, 48, 48), 16, new Vector2(.5f, 0));
             var portal = Pickup("Time Gate - E to finish", WorldPickup.Kind.Exit, portalSprite, new Vector2(109, 0));
             portal.GetComponent<BoxCollider2D>().size = new Vector2(2.5f, 3);
             portal.GetComponent<BoxCollider2D>().offset = new Vector2(0, 1.5f);
@@ -144,7 +144,8 @@ public static class BuildLevel01
     }
     static string PathFor(string suffix)
     {
-        var result = Directory.GetFiles("Assets/Art/Source", "*.png", SearchOption.AllDirectories)
+        var result = new[] { "Assets/Art/Chapter01/Source", "Assets/Art/Shared/Source" }
+            .SelectMany(folder => Directory.GetFiles(folder, "*.png", SearchOption.AllDirectories))
             .FirstOrDefault(p => p.Replace('\\','/').EndsWith(suffix, StringComparison.OrdinalIgnoreCase));
         if (result == null) throw new FileNotFoundException("Asset missing: " + suffix);
         return result.Replace('\\', '/');
@@ -211,7 +212,7 @@ public static class BuildLevel01
     static AnimatorController EnemyAnimator(string name)
     {
         bool wizard = name == "Guardian", flying = name == "Flying eye";
-        string prefix = wizard ? "EVil Wizard 2/EVil Wizard 2/Sprites/" : "Monsters_Creatures_Fantasy/Monsters_Creatures_Fantasy/" + name + "/";
+        string prefix = wizard ? "EVil Wizard 2/EVil Wizard 2/Sprites/" : flying ? "Enemies/Flying eye/" : "Monsters_Creatures_Fantasy/Monsters_Creatures_Fantasy/" + name + "/";
         var frames = new Dictionary<string,Sprite[]>();
         foreach (var state in new[] { "Idle", "Run", "Attack", "Hurt", "Dead" })
         {
@@ -247,7 +248,10 @@ public static class BuildLevel01
         return controller;
     }
     public static string CharacterAnimationFolder(string name)
-    { return "Assets/Animations/Level01/"+(name=="Finn" ? "Player/Finn" : "Enemies/"+(name=="Flyingeye" ? "FlyingEye" : name)); }
+    {
+        if (name == "Flyingeye") return "Assets/Animations/Shared/Enemies/FlyingEye";
+        return "Assets/Animations/Level01/" + (name == "Finn" ? "Player/Finn" : "Enemies/" + name);
+    }
     public static void ConfigureCharacterAnimator(AnimatorController controller,bool player)
     {
         controller.parameters=new[] {
@@ -310,7 +314,7 @@ public static class BuildLevel01
         var p=go.AddComponent<FinnController>();p.animator=animator;p.image=visual;p.groundMask=1<<LayerMask.NameToLayer("Ground");p.enemyMask=1<<LayerMask.NameToLayer("Enemy");
         p.attackPoint=new GameObject("AttackPoint").transform;p.attackPoint.SetParent(go.transform,false);p.attackPoint.localPosition=new Vector3(.8f,.65f,0);
         ApplySlideCombat.ConfigureFinn(p);
-        return SavePrefab(go,"Finn");
+        return SavePrefab(go, "Assets/Prefabs/Shared/Player", "Finn");
     }
     static GameObject EnemyPrefab(string name, EnemyController.Kind kind, AnimatorController controller, PhysicsMaterial2D material)
     {
@@ -341,7 +345,8 @@ public static class BuildLevel01
         if(kind==EnemyController.Kind.Mushroom){e.maxHealth=35;e.speed=1.1f;}
         if(kind==EnemyController.Kind.FlyingEye)e.maxHealth=35;
         ApplySlideCombat.ConfigureEnemy(e);
-        return SavePrefab(go,name);
+        string folder = kind == EnemyController.Kind.FlyingEye ? "Assets/Prefabs/Shared/Enemies" : "Assets/Prefabs/Chapter01/Enemies";
+        return SavePrefab(go, folder, name);
     }
     static GameObject ProjectilePrefab()
     {
@@ -349,10 +354,10 @@ public static class BuildLevel01
         var v=Visual(go.transform,"Visual",ui["81"],6);v.transform.localScale=Vector3.one*.55f;v.color=Ice;
         var c=go.AddComponent<CircleCollider2D>();c.radius=.18f;c.isTrigger=true;
         var rb=go.AddComponent<Rigidbody2D>();rb.gravityScale=0;rb.collisionDetectionMode=CollisionDetectionMode2D.Continuous;
-        go.AddComponent<IceProjectile>();return SavePrefab(go,"IceBolt");
+        go.AddComponent<IceProjectile>();return SavePrefab(go, "Assets/Prefabs/Chapter01/Enemies", "IceBolt");
     }
     static GameObject PickupPrefab(string name,WorldPickup.Kind kind,Sprite sprite)
-    { var go=Pickup(name,kind,sprite,Vector2.zero).gameObject;return SavePrefab(go,name); }
+    { var go=Pickup(name,kind,sprite,Vector2.zero).gameObject;return SavePrefab(go, "Assets/Prefabs/Chapter01/Items", name); }
     static WorldPickup Pickup(string name,WorldPickup.Kind kind,Sprite sprite,Vector2 position)
     {
         var go=new GameObject(name);go.transform.position=position;go.layer=LayerMask.NameToLayer("Pickup");
@@ -368,8 +373,8 @@ public static class BuildLevel01
     }
     static SpriteRenderer Visual(Transform parent,string name,Sprite sprite,int order)
     {var g=new GameObject(name);g.transform.SetParent(parent,false);var s=g.AddComponent<SpriteRenderer>();s.sprite=sprite;s.sharedMaterial=spriteMaterial;s.sortingOrder=order;return s;}
-    static GameObject SavePrefab(GameObject go,string name)
-    {var saved=PrefabUtility.SaveAsPrefabAsset(go,"Assets/Prefabs/Level01/"+name+".prefab");UnityEngine.Object.DestroyImmediate(go);return saved;}
+    static GameObject SavePrefab(GameObject go, string folder, string name)
+    {var saved=PrefabUtility.SaveAsPrefabAsset(go,folder + "/" + name + ".prefab");UnityEngine.Object.DestroyImmediate(go);return saved;}
     static GameObject Spawn(GameObject prefab,Vector2 p)
     {var go=(GameObject)PrefabUtility.InstantiatePrefab(prefab);go.transform.position=p;return go;}
     static Tilemap MakeTilemap(Transform parent,string name,int order)
@@ -457,8 +462,8 @@ public static class BuildLevel01
         title.fontStyle = FontStyles.Bold;
         var actions = Rect(content,"Buttons",Vector2.one*.5f,Vector2.one*.5f,Vector2.zero,new Vector2(400,112));
         Layout(actions.gameObject.AddComponent<HorizontalLayoutGroup>(), 0, 64);
-        game.homeButton = PauseIconButton(actions,"Home",-88,AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Art/UI/Pause/Home.png"),sprite);
-        game.resumeButton = PauseIconButton(actions,"Play",88,AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Art/UI/Pause/Play.png"),sprite);
+        game.homeButton = PauseIconButton(actions,"Home",-88,AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Art/Shared/UI/Pause/Home.png"),sprite);
+        game.resumeButton = PauseIconButton(actions,"Play",88,AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Art/Shared/UI/Pause/Play.png"),sprite);
         game.homeButton.interactable = false;
         game.pausePanel = board.gameObject;
         game.pausePanel.SetActive(false);
@@ -502,7 +507,7 @@ public static class BuildLevel01
         game.shardText=Label(objective.transform,"Count","0 / 3",26,new Vector2(1,1),new Vector2(1,1),new Vector2(-16,-10),new Vector2(85,34),Gold,TextAnchor.MiddleRight);
         game.objectiveText=Label(objective.transform,"Objective Text","",16,new Vector2(0,0),new Vector2(0,0),new Vector2(20,13),new Vector2(270,30),Color.white);
         var controls=Panel(canvas.transform,"Controls",new Vector2(0,0),new Vector2(0,0),new Vector2(28,22),new Vector2(850,42),new Color(.045f,.09f,.16f,.88f),ui["12"]);
-        Label(controls.transform,"Keys","A D / ← →  Di chuyển     SPACE  Nhảy     ENTER / J  Đánh     E  Tương tác     ESC  Tạm dừng",15,new Vector2(.5f,.5f),new Vector2(.5f,.5f),Vector2.zero,new Vector2(820,40),Color.white);
+        Label(controls.transform,"Keys","A D / ← →  Di chuyển     SPACE  Nhảy     ENTER  Đánh     E  Tương tác     ESC  Tạm dừng",15,new Vector2(.5f,.5f),new Vector2(.5f,.5f),Vector2.zero,new Vector2(820,40),Color.white);
         game.notificationText=Label(canvas.transform,"Notification","",20,new Vector2(.5f,0),new Vector2(.5f,0),new Vector2(0,115),new Vector2(1100,64),Navy,TextAnchor.MiddleCenter);
         game.notificationText.fontStyle=FontStyles.Bold;
         game.promptText=Label(canvas.transform,"Interaction Prompt","",19,new Vector2(.5f,0),new Vector2(.5f,0),new Vector2(0,78),new Vector2(700,30),Navy,TextAnchor.MiddleCenter);

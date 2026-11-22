@@ -61,13 +61,13 @@ public static class VerifyLevel01
             else if(stage==5)
             {Assert(player.Body.linearVelocityY<11,"Double jump allowed");Keys();log.AppendLine("PASS: Actual keyboard D moves, Space jumps, midair Space blocked.");Wait(1,6);}
             else if(stage==6)
-            {Assert(player.Grounded,"Finn did not land after jump");Warp(new Vector2(mushroom.transform.position.x-1.15f,.1f));Keys(Key.J);Wait(.25,7);}
+            {Assert(player.Grounded,"Finn did not land after jump");Warp(new Vector2(mushroom.transform.position.x-1.15f,.1f));Keys(Key.Enter);Wait(.25,7);}
             else if(stage==7)
-            {Assert(mushroom.IsDead,"Sword did not damage enemy");Keys();Warp(new Vector2(3,.1f));log.AppendLine("PASS: J sword attack kills the 35-HP mushroom.");Wait(.2,8);}
+            {Assert(mushroom.IsDead,"Sword did not damage enemy");Keys();Warp(new Vector2(3,.1f));log.AppendLine("PASS: Enter sword attack kills the 35-HP mushroom.");Wait(.2,8);}
             else if(stage==8)
-            {var prefab=AssetDatabase.LoadAssetAtPath<IceProjectile>("Assets/Prefabs/Level01/IceBolt.prefab");UnityEngine.Object.Instantiate(prefab,player.transform.position+new Vector3(1,.6f,0),Quaternion.identity).Launch(Vector2.left);Wait(.35,9);}
+            {var prefab=AssetDatabase.LoadAssetAtPath<IceProjectile>("Assets/Prefabs/Chapter01/Enemies/IceBolt.prefab");UnityEngine.Object.Instantiate(prefab,player.transform.position+new Vector3(1,.6f,0),Quaternion.identity).Launch(Vector2.left);Wait(.35,9);}
             else if(stage==9)
-            {Assert(player.Health==80,"Projectile should subtract 20 health, actual="+player.Health);var prefab=AssetDatabase.LoadAssetAtPath<IceProjectile>("Assets/Prefabs/Level01/IceBolt.prefab");UnityEngine.Object.Instantiate(prefab,player.transform.position+new Vector3(.5f,.6f,0),Quaternion.identity).Launch(Vector2.left);Wait(.25,10);}
+            {Assert(player.Health==80,"Projectile should subtract 20 health, actual="+player.Health);var prefab=AssetDatabase.LoadAssetAtPath<IceProjectile>("Assets/Prefabs/Chapter01/Enemies/IceBolt.prefab");UnityEngine.Object.Instantiate(prefab,player.transform.position+new Vector3(.5f,.6f,0),Quaternion.identity).Launch(Vector2.left);Wait(.25,10);}
             else if(stage==10)
             {Assert(player.Health==80,"Repeated projectile bypassed invulnerability");Assert(Mathf.Abs(game.healthFill.fillAmount-.8f)<.001f,"Health UI incorrect");log.AppendLine("PASS: Real projectile collision, 20 damage, invulnerability and 80% health UI.");Wait(.5,11);}
             else if(stage==11)
@@ -111,7 +111,7 @@ public static class VerifyLevel01
                 guardian.enabled=false;foreach(var shot in UnityEngine.Object.FindObjectsByType<IceProjectile>(FindObjectsSortMode.None))UnityEngine.Object.Destroy(shot.gameObject);
                 Warp(new Vector2(97.8f,.1f));log.AppendLine("PASS: Guardian AI instantiates moving ice projectiles.");attacks=0;Wait(.3,14);
             }
-            else if(stage==14){Keys(Key.J);attacks++;Wait(.17,15);}
+            else if(stage==14){Keys(Key.Enter);attacks++;Wait(.17,15);}
             else if(stage==15)
             {
                 Keys();

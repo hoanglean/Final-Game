@@ -12,7 +12,7 @@
 - `Assets/Animations/Level01/Player/Finn`: Finn.controller và thư mục Clips chứa bảy animation.
 - `Assets/Animations/Level01/Enemies/Mushroom`: nấm.
 - `Assets/Animations/Level01/Enemies/Goblin`: goblin.
-- `Assets/Animations/Level01/Enemies/FlyingEye`: mắt bay.
+- `Assets/Animations/Shared/Enemies/FlyingEye`: mắt bay.
 - `Assets/Animations/Level01/Enemies/Guardian`: pháp sư giữ cổng.
 
 Mỗi loại quái có controller riêng và thư mục Clips chứa Idle, Run, Attack, Hurt, Dead. Không cần đổi code khi thay các sprite trong clip hoặc chỉnh quy tắc chuyển trạng thái.

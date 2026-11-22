@@ -10,7 +10,7 @@ public static class ApplyIceProjectileArt
 {
     const string Request="Library/ApplyIceProjectile.request";
     const string Status="Library/IceProjectileAsset.txt";
-    const string Source="Assets/Art/Source/PinoGames/IceProjectile/Ice projectile";
+    const string Source="Assets/Art/Chapter01/Source/PinoGames/IceProjectile/Ice projectile";
     const string Folder="Assets/Animations/Boss01/FrostBolt";
     [InitializeOnLoadMethod]
     static void Schedule(){if(File.Exists(Request))EditorApplication.delayCall+=Apply;}
@@ -22,7 +22,7 @@ public static class ApplyIceProjectileArt
         try
         {
             ImportAnimations();
-            const string path="Assets/Prefabs/Boss01/FrostBolt.prefab";
+            const string path="Assets/Prefabs/Chapter01/Bosses/FrostBolt.prefab";
             var root=PrefabUtility.LoadPrefabContents(path);
             try{ConfigureProjectile(root);PrefabUtility.SaveAsPrefabAsset(root,path);}
             finally{PrefabUtility.UnloadPrefabContents(root);}
